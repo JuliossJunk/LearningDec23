@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, Depends
 from typing import List, Optional
 
 from fastapi_users import fastapi_users, FastAPIUsers
@@ -40,3 +40,14 @@ app.include_router(
     prefix="/auth",
     tags=["auth"],
 )
+
+current_user = fastapi_users.current_user()
+
+
+@app.get("/protected-route")
+def protected_route(user: User = Depends(current_user)):
+    return f"Hello, {user.username}"
+
+@app.get("/unprotected-route")
+def unprotected_route():
+    return f"Hello, and gtfo here!"
